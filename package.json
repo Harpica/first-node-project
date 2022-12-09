@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "@types/node": "^18.11.11",
+    "editorconfig": "^1.0.1"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
