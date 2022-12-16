@@ -1,15 +1,28 @@
 import express from 'express';
 import morgan from 'morgan';
+import mongoose from 'mongoose';
+import { Blog } from './models/blog';
 
 // express app
 const app = express();
 
+// connect to MondoDB
+const dbURI =
+  'mongodb+srv://harpica:3141592b6@firstcluster.pvf75lv.mongodb.net/node-tut?retryWrites=true&w=majority'; // don't forget to write user, password, clusterName and collectionName(before ?)
+mongoose
+  .connect(dbURI)
+  .then((result) => {
+    console.log('connected to db');
+    // start listening for requiests only after connection to DB
+    app.listen(3000);
+  }) // local host
+  .catch((err) => {
+    console.log(err);
+  }); // async tack
+
 // register view engine
 app.set('view engine', 'ejs');
 app.set('views', 'views'); // where to find views (folder)
-
-// listen for requiests
-app.listen(3000); // local host
 
 //middleware & static files (public, access by browser)
 app.use(express.static('public')); // everything in puplic folder is avaliable in frontend
@@ -25,16 +38,48 @@ app.use(express.static('public')); // everything in puplic folder is avaliable i
 
 app.use(morgan('dev'));
 
+// kind of exanple how to communicate with db
+// app.get('/add-blog', (req, res) => {
+//   const blog = new Blog({
+//     title: 'new blog',
+//     snippet: 'about my new blog',
+//     body: 'more about my new blog',
+//   }); // creating new Blog
+//   blog
+//     .save()
+//     .then((result) => {
+//       res.send(result);
+//     })
+//     .catch((err) => console.log(err)); // to save to db, async
+// });
+
+// app.get('/all-blogs', (req, res) => {
+//   Blog.find()
+//     .then((result) => res.send(result))
+//     .catch((err) => console.log(err)); // should not create new Blog, could use the method of the model. Send result to browser
+// });
+
+// app.get('/single-blog', (req, res) => {
+//   Blog.findById('639c7422262f2256c42aeb4e')
+//     .then((result) => {
+//       res.send(result);
+//     })
+//     .catch((err) => console.log(err));
+// });
+
+// routes
 app.get('/', (req, res) => {
   //   res.send(); // automatically setHead, status code
   //   res.sendFile('./views/index.html', { root: __dirname }); // to show where relative path should start
-  const blogs = [
-    { title: '123', snippet: '123-snip' },
-    { title: '124', snippet: '124-snip' },
-    { title: '125', snippet: '125-snip' },
-  ];
+  // const blogs = [
+  //   { title: '123', snippet: '123-snip' },
+  //   { title: '124', snippet: '124-snip' },
+  //   { title: '125', snippet: '125-snip' },
+  // ];
 
-  res.render('index', { title: 'Home', blogs }); //  in {} is data that we send with page (we can access it in ejs file)
+  // res.render('index', { title: 'Home', blogs }); //  in {} is data that we send with page (we can access it in ejs file)
+
+  res.redirect('/blogs');
 });
 
 app.get('/about', (req, res) => {
@@ -46,6 +91,16 @@ app.get('/about', (req, res) => {
 //   // redirect
 //   res.redirect('/about');
 // });
+
+// blog routs
+app.get('/blogs', (req, res) => {
+  Blog.find()
+    .sort({ createdAt: -1 }) // -1 - как сортировать по времени
+    .then((result) => {
+      res.render('index', { title: 'All Blogs', blogs: result });
+    })
+    .catch((err) => console.log(err));
+});
 
 app.get('/blogs/create', (req, res) => {
   res.render('create', { title: 'New Blog' });
