@@ -18,7 +18,7 @@ mongoose
   }) // local host
   .catch((err) => {
     console.log(err);
-  }); // async tack
+  }); // async task
 
 // register view engine
 app.set('view engine', 'ejs');
@@ -35,7 +35,7 @@ app.use(express.static('public')); // everything in puplic folder is avaliable i
 //   // allows browser to move to the next line of code
 //   next();
 // });
-
+app.use(express.urlencoded({ extended: true })); // take all the data from form and put it into object
 app.use(morgan('dev'));
 
 // kind of exanple how to communicate with db
@@ -93,6 +93,10 @@ app.get('/about', (req, res) => {
 // });
 
 // blog routs
+app.get('/blogs/create', (req, res) => {
+  res.render('create', { title: 'Create a new blog' });
+});
+
 app.get('/blogs', (req, res) => {
   Blog.find()
     .sort({ createdAt: -1 }) // -1 - как сортировать по времени
@@ -102,8 +106,34 @@ app.get('/blogs', (req, res) => {
     .catch((err) => console.log(err));
 });
 
-app.get('/blogs/create', (req, res) => {
-  res.render('create', { title: 'New Blog' });
+app.post('/blogs', (req, res) => {
+  const blog = new Blog(req.body);
+  blog
+    .save()
+    .then((result) => {
+      res.redirect('/blogs');
+    })
+    .catch((err) => console.log(err));
+});
+
+app.get('/blogs/:id', (req, res) => {
+  // should be colomn before id, as it is parameter
+  const id: string = req.params.id; // get id from request
+  console.log(id);
+  Blog.findById(id)
+    .then((result) => {
+      res.render('details', { blog: result, title: 'Blog details' });
+    })
+    .catch((err) => console.log(err));
+});
+
+app.delete('/blogs/:id', (req, res) => {
+  const id: string = req.params.id;
+  Blog.findByIdAndDelete(id)
+    .then((result) => {
+      res.json({ redirect: '/blogs' });
+    })
+    .catch((err) => console.log(err)); // because we are answering to fench request from frontent, we must send back data (can't emmidiatelly redirect)
 });
 
 app.use((req, res) => {

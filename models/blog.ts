@@ -1,4 +1,4 @@
-import mongoose, { Mongoose } from 'mongoose';
+import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema; // define the structure of the docs we will store; function-constructor
 const blogSchema = new Schema(
