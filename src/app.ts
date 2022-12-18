@@ -4,17 +4,19 @@ import mongoose from 'mongoose';
 import { router as blogRoutes } from './routes/blogRoutes';
 
 // express app
+const port = process.env.PORT || 3000;
 const app = express();
 
 // connect to MondoDB
 const dbURI =
-  'mongodb+srv://harpica:3141592b6@firstcluster.pvf75lv.mongodb.net/node-tut?retryWrites=true&w=majority'; // don't forget to write user, password, clusterName and collectionName(before ?)
+  'mongodb+srv://ninja-blog-app-main-db-0fa82df5f8a:bB9Eb5w24j6rB8538uYUYcSfWU85XB@prod-us-central1-1.lfuy1.mongodb.net/ninja-blog-app-main-db-0fa82df5f8a';
+// 'mongodb+srv://harpica:3141592b6@firstcluster.pvf75lv.mongodb.net/node-tut?retryWrites=true&w=majority'; // don't forget to write user, password, clusterName and collectionName(before ?)
 mongoose
   .connect(dbURI)
   .then((result) => {
     console.log('connected to db');
     // start listening for requiests only after connection to DB
-    app.listen(3000);
+    app.listen(port);
   }) // local host
   .catch((err) => {
     console.log(err);
