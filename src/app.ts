@@ -24,7 +24,7 @@ mongoose
 
 // register view engine
 app.set('view engine', 'ejs');
-app.set('views', 'views'); // where to find views (folder)
+app.set('views', 'src/views'); // where to find views (folder)
 
 //middleware & static files (public, access by browser)
 app.use(express.static('public')); // everything in puplic folder is avaliable in frontend
