@@ -36,7 +36,7 @@ app.use(express.static('public')); // everything in puplic folder is avaliable i
 //   next();
 // });
 app.use(express.urlencoded({ extended: true })); // take all the data from form and put it into object
-app.use(morgan('dev'));
+app.use(morgan('dev')); // HTTP request logger middleware for node.js
 
 // kind of exanple how to communicate with db
 // app.get('/add-blog', (req, res) => {
